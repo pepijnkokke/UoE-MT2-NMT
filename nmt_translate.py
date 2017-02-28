@@ -358,7 +358,7 @@ def predict_sentence(line_fr, line_en=None, display=True,
     rec = 0
     filter_match = False
 
-    matches = count_match(en_ids, pred_ids)
+    matches = count_match(en_ids, pred_ids[:-1])
     prec = matches/len(pred_ids)
     rec = matches/len(en_ids)
 

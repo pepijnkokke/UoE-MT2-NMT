@@ -49,10 +49,9 @@ class EncoderDecoder(Chain):
 
         '''
         ___QUESTION-1-DESCRIBE-A-START___
-
-        - Explain the following lines of code
-        - Think about what add_link() does and how can we access Links added in Chainer.
-        - Why are there two loops or adding links?
+        Create `nlayers_enc` encoding layers using add_link(). There are two
+        loops for adding layers because we create one encoder to pass over the
+        sentence in order, and one to pass over the sentence in reverse order.
         '''
         self.lstm_enc = ["L{0:d}_enc".format(i) for i in range(nlayers_enc)]
         for lstm_name in self.lstm_enc:
@@ -75,8 +74,12 @@ class EncoderDecoder(Chain):
         - L.EmbedID(vsize_dec, 2*n_units)
         - L.LSTM(2*n_units, 2*n_units)
         - L.Linear(2*n_units, vsize_dec)
-
         Why are we using multipliers over the base number of units (n_units)?
+
+        The encoding of a sentence is a matrix, each column of which is the
+        concatenation of the hidden states of the forward and the backward
+        encoder LSTMs at that position. Since both the LSTMs are sized n_units,
+        the concatenation of these two hidden states is 2*n_units.
         '''
 
         self.add_link("embed_dec", L.EmbedID(vsize_dec, 2*n_units))
@@ -112,16 +115,20 @@ class EncoderDecoder(Chain):
         self.loss = 0
 
     '''
-        ___QUESTION-1-DESCRIBE-C-START___
+    ___QUESTION-1-DESCRIBE-C-START___
+    Describe what the function set_decoder_state() is doing. What are c_state
+    and h_state?
 
-        Describe what the function set_decoder_state() is doing. What are c_state and h_state?
+    The method set_decoder_state() will feed the encoder output into the
+    decoder. The initial implementation takes the cell states and hidden state
+    from the final LSTM of the encoder, and feeds them into the first LSTM of
+    the decoder.
     '''
     def set_decoder_state(self):
         xp = cuda.cupy if self.gpuid >= 0 else np
         c_state = F.concat((self[self.lstm_enc[-1]].c, self[self.lstm_rev_enc[-1]].c))
         h_state = F.concat((self[self.lstm_enc[-1]].h, self[self.lstm_rev_enc[-1]].h))
         self[self.lstm_dec[0]].set_state(c_state, h_state)
-
     '''___QUESTION-1-DESCRIBE-C-END___'''
 
     '''
