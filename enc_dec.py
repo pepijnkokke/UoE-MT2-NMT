@@ -125,7 +125,6 @@ class EncoderDecoder(Chain):
     the decoder.
     '''
     def set_decoder_state(self):
-        xp = cuda.cupy if self.gpuid >= 0 else np
         c_state = F.concat((self[self.lstm_enc[-1]].c, self[self.lstm_rev_enc[-1]].c))
         h_state = F.concat((self[self.lstm_enc[-1]].h, self[self.lstm_rev_enc[-1]].h))
         self[self.lstm_dec[0]].set_state(c_state, h_state)
@@ -174,8 +173,12 @@ class EncoderDecoder(Chain):
         for f_word, r_word in zip(var_en, var_rev_en):
             '''
             ___QUESTION-1-DESCRIBE-D-START___
+            Explain why we are performing two encode operations.
 
-            - Explain why we are performing two encode operations
+            Because we are stepping through the sentence forwards and backwards
+            at the same time -- see the call to zip() above -- and we are encoding
+            the "forwards" word using the forwards encoder, and the backwards word
+            using the backwards encoder.
             '''
             self.encode(f_word, self.lstm_enc, train)
             self.encode(r_word, self.lstm_rev_enc, train)
@@ -247,8 +250,11 @@ class EncoderDecoder(Chain):
             # pred_word = Variable(xp.asarray([pred_word.data], dtype=np.int32), volatile=not train)
             '''
             ___QUESTION-1-DESCRIBE-E-START___
-            Explain what loss is computed with an example
-            What does this value mean?
+            Explain what loss is computed with an example. What does this value mean?
+
+            The cross-entropy is a soft measure of how close the network got to the
+            correct answer. Here it is used to find how close the predicted word
+            (predicted_out) was to the expected word (next_word_var).
             '''
             self.loss += F.softmax_cross_entropy(predicted_out, next_word_var)
             '''___QUESTION-1-DESCRIBE-E-END___'''
@@ -291,10 +297,8 @@ class EncoderDecoder(Chain):
         return predicted_sent, alpha_arr
 
     def encode_decode_predict(self, in_word_list, max_predict_len=20, sample=False):
-        xp = cuda.cupy if self.gpuid >= 0 else np
         self.reset_state()
         # encode list of words/tokens
-        in_word_list_no_padding = [w for w in in_word_list if w != PAD_ID]
         enc_states = self.encode_list(in_word_list, train=False)
         # initialize decoder LSTM to final encoder state
         self.set_decoder_state()
