@@ -65,10 +65,10 @@
 \begin{framed}
 \begin{compactenum}[1.]
 	\item
-    When looking at figures \ref{fig:toks} and \ref{fig:chars}, it seems as if
-    English is a more productive language (more `meaning' with fewer symbols)
-    when we measure sentence length in tokens, and Japanese is more productive
-    when we measure it in characters. 
+    When looking at figures \ref{fig:corr-toks} and \ref{fig:corr-chars}, it
+    seems as if English is a more productive language (more `meaning' with fewer
+    symbols) when we measure sentence length in tokens, and Japanese is more
+    productive when we measure it in characters.  
     Both metrics are unfair: Japanese uses logograms, which explains the
     high productivity using characters. However, it also uses a system of
     particles to mark e.g.\ subjects and objects, which are treated as separate
@@ -147,18 +147,34 @@
 
 \begin{figure}
   \centering
-  \includegraphics[width=\linewidth]{fig-toks}
+  \includegraphics[width=\linewidth]{fig-corr-toks}
   \caption[Sentence lenths (tokens)]%
   {Distribution of and correlation between Japanese and English sentence lengths (tokens)}
-  \label{fig:toks}
+  \label{fig:corr-toks}
 \end{figure}
 
 \begin{figure}
   \centering
-  \includegraphics[width=\linewidth]{fig-chars}
+  \includegraphics[width=\linewidth]{fig-corr-chars}
   \caption[Sentence lenths (characters)]%
   {Distribution of and correlation between Japanese and English sentence lengths (tokens)}
-  \label{fig:chars}
+  \label{fig:corr-chars}
 \end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{fig-toks-en}
+  \caption{Counts for tokens and token types (English).}
+  \label{fig:toks-en}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{fig-toks-fr}
+  \caption{Counts for tokens and token types (Japanese).}
+  \label{fig:toks-fr}
+\end{figure}
+
+
 
 \end{document}
