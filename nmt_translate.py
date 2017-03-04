@@ -417,12 +417,9 @@ def predict(s=NUM_TRAINING_SENTENCES, num=NUM_DEV_SENTENCES,
                     plot_name=None
 
                 # make prediction
-                cp, tp, t, f = predict_sentence(line_fr,
-                                             line_en,
-                                             display=display,
-                                             plot_name=plot_name,
-                                             p_filt=p_filt, r_filt=r_filt,
-                                             sample=sample)
+                cp, tp, t, f = predict_sentence(
+                    line_fr, line_en, display=display, plot_name=plot_name,
+                    p_filt=p_filt, r_filt=r_filt, sample=sample)
                 metrics["cp"].append(cp)
                 metrics["tp"].append(tp)
                 metrics["t"].append(t)
@@ -470,9 +467,6 @@ def main():
     if NUM_EPOCHS > 0:
         train_loop(text_fname, NUM_TRAINING_SENTENCES, NUM_EPOCHS)
 
-if __name__ == "__main__":
-    main()
-
 #---------------------------------------------------------------------
 
 def test_lam_tran():
@@ -483,4 +477,8 @@ def test_lam_tran():
         line_fr = line_fr.encode()
         line_en = line_en.encode()
 
-        predict_sentence(line_fr=line_fr, line_en=line_en)
+        predict_sentence(line_fr=line_fr, line_en=line_en, sample=True)
+
+if __name__ == "__main__":
+    main()
+    test_lam_tran()

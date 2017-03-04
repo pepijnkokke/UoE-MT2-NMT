@@ -209,11 +209,9 @@ class EncoderDecoder(Chain):
         else:
             '''
             ___QUESTION-2-SAMPLE
-
-            - Add code to sample from the probability distribution to
-            choose the next word
             '''
-            pass
+            indx = xp.random.choice(a=len(prob.data[0]), p=prob.data[0])
+            pred_word = Variable(xp.asarray([indx], dtype=np.int32), volatile=not train)
         return pred_word
 
     def encode_decode_train(self, in_word_list, out_word_list, train=True, sample=False):
