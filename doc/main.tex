@@ -173,7 +173,23 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%
 \question[10]{Experiment with changes to the model, and explain results.}
 \begin{framed}
-\emph{Your answer here.}
+  The initial perplexity was $53.7228$ for the 4557 words in the development
+  set, and the initial BLEU score was $19.487$. For this experiment, I have
+  added a layer in both the encoder and the decoder. I trained the model for
+  10 epochs, because this would give a fair comparison with the baseline in
+  terms of learning speed.
+  This changed the perplexity to $54.1784$ and the BLEU score to $17.897$,
+  meaning that the model with more layers performs worse on \emph{both}
+  measures. 
+  Looking at the sentences, we find that both models are, in fact, terrible.
+  However, some of the translations that \emph{almost} worked under our base
+  model, bear no resemblance to our reference translation under our new,
+  experimental model. For instance,
+  \begin{tabular}{lll}
+    Ref & have you finished your homework already ? \_EOS  \\
+    Base& have you finished your homework homework ? \_EOS \\
+    New & where did you released ? ? \_EOS
+  \end{tabular}
 \end{framed}
 
 

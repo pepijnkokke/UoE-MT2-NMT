@@ -15,6 +15,7 @@ from chainer import cuda, Function, gradient_check, report, training, utils, Var
 from chainer import datasets, iterators, optimizers, serializers
 from chainer import Link, Chain, ChainList
 import chainer.functions as F
+import chainer.functions.noise as N
 import chainer.links as L
 from chainer.training import extensions
 from chainer.functions.array import concat
@@ -138,12 +139,12 @@ class EncoderDecoder(Chain):
     '''
     def feed_lstm(self, word, embed_layer, lstm_layer_list, train):
         # get embedding for word
-        embed_id = embed_layer(word)
+        embed_id = N.dropout(embed_layer(word), train=train)
         # feed into first LSTM layer
-        hs = self[lstm_layer_list[0]](embed_id)
+        hs = N.dropout(self[lstm_layer_list[0]](embed_id), train=train)
         # feed into remaining LSTM layers
         for lstm_layer in lstm_layer_list[1:]:
-            hs = self[lstm_layer](hs)
+            hs = N.dropout(self[lstm_layer](hs), train=train)
 
     # Function to encode an source sentence word
     def encode(self, word, lstm_layer_list, train):
@@ -153,9 +154,6 @@ class EncoderDecoder(Chain):
     def decode(self, word, train):
         self.feed_lstm(word, self.embed_dec, self.lstm_dec, train)
 
-    '''
-
-    '''
     def encode_list(self, in_word_list, train=True):
         xp = cuda.cupy if self.gpuid >= 0 else np
         # convert list of tokens into chainer variable list
@@ -166,7 +164,7 @@ class EncoderDecoder(Chain):
                            volatile=(not train)))
 
         # array to store hidden states for each word
-        # enc_states = xp.empty((0,2*self.n_units), dtype=xp.float32)
+        enc_states = xp.empty((0,2*self.n_units), dtype=xp.float32)
         first_entry = True
 
         # encode tokens
