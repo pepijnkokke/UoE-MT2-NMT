@@ -15,7 +15,7 @@ from chainer import cuda, Function, gradient_check, report, training, utils, Var
 from chainer import datasets, iterators, optimizers, serializers
 from chainer import Link, Chain, ChainList
 import chainer.functions as F
-import chainer.functions.noise as N
+import chainer.functions.noise.dropout as N
 import chainer.links as L
 from chainer.training import extensions
 from chainer.functions.array import concat
@@ -139,12 +139,12 @@ class EncoderDecoder(Chain):
     '''
     def feed_lstm(self, word, embed_layer, lstm_layer_list, train):
         # get embedding for word
-        embed_id = embed_layer(word)
+        embed_id = N.dropout(embed_layer(word), ratio=DROPOUT_RATIO, train=train)
         # feed into first LSTM layer
-        hs = self[lstm_layer_list[0]](embed_id)
+        hs = N.dropout(self[lstm_layer_list[0]](embed_id), ratio=DROPOUT_RATIO, train=train)
         # feed into remaining LSTM layers
         for lstm_layer in lstm_layer_list[1:]:
-            hs = self[lstm_layer](hs)
+            hs = N.dropout(self[lstm_layer](hs), ratio=DROPOUT_RATIO, train=train)
 
     # Function to encode an source sentence word
     def encode(self, word, lstm_layer_list, train):
