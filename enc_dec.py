@@ -139,12 +139,12 @@ class EncoderDecoder(Chain):
     '''
     def feed_lstm(self, word, embed_layer, lstm_layer_list, train):
         # get embedding for word
-        embed_id = N.dropout(embed_layer(word), train=train)
+        embed_id = embed_layer(word)
         # feed into first LSTM layer
-        hs = N.dropout(self[lstm_layer_list[0]](embed_id), train=train)
+        hs = self[lstm_layer_list[0]](embed_id)
         # feed into remaining LSTM layers
         for lstm_layer in lstm_layer_list[1:]:
-            hs = N.dropout(self[lstm_layer](hs), train=train)
+            hs = self[lstm_layer](hs)
 
     # Function to encode an source sentence word
     def encode(self, word, lstm_layer_list, train):

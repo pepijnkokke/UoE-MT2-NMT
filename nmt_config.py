@@ -31,13 +31,6 @@ HARD_ATTN = 2
 # for appending post fix to output
 attn_post = ["NO_ATTN", "SOFT_ATTN", "HARD_ATTN"]
 
-# Dropout flags
-NO_DROPOUT = 0
-USE_DROPOUT = 1
-
-# for appending post fix to output
-dropout_post = ["NO_DROPOUT", "DROPOUT"]
-
 # maximum available sentences in dataset
 NUM_SENTENCES = 10500
 FREQ_THRESH = 1
@@ -105,9 +98,6 @@ hidden_units = 100
 # default model - no attention
 # when implementing attention use either - SOFT_ATTN or HARD_ATTN
 use_attn = NO_ATTN
-# default model - no dropout
-# when implementing dropout use USE_DROPOUT
-use_dropout = USE_DROPOUT
 '''
 KEEP this flag true to avoid losing earlier trained models
 The code checks if a trained model file with the selected parameters
@@ -118,20 +108,19 @@ load_existing_model = True
 # Training Parameters
 #---------------------------------------------------------------------
 # Training EPOCHS
-NUM_EPOCHS = 5
+NUM_EPOCHS = 0
 # if >= 0, use GPU, if negative use CPU
 gpuid = -1
 #---------------------------------------------------------------------
 # Log file details - changing the following names not recommended
 #---------------------------------------------------------------------
-name_to_log = "{0:d}sen_{1:d}-{2:d}layers_{3:d}units_{4:s}_{5:s}_{6:s}".format(
+name_to_log = "{0:d}sen_{1:d}-{2:d}layers_{3:d}units_{4:s}_{5:s}".format(
                                                             NUM_TRAINING_SENTENCES,
                                                             num_layers_enc,
                                                             num_layers_dec,
                                                             hidden_units,
                                                             EXP_NAME,
-                                                            attn_post[use_attn],
-                                                            dropout_post[use_dropout])
+                                                            attn_post[use_attn])
 
 log_train_fil_name = os.path.join(model_dir, "train_{0:s}.log".format(name_to_log))
 model_fil = os.path.join(model_dir, "seq2seq_{0:s}.model".format(name_to_log))
