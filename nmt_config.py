@@ -32,7 +32,7 @@ HARD_ATTN = 2
 attn_post = ["NO_ATTN", "SOFT_ATTN", "HARD_ATTN"]
 
 # Dropout ratio
-DROPOUT_RATIO = 0.5
+DROPOUT_RATIO = 0.2
 
 # maximum available sentences in dataset
 NUM_SENTENCES = 10500
@@ -70,11 +70,13 @@ print("Japanese English dataset configuration")
 
 # Set experiment name - can be used to save models with different
 # names
-EXP_NAME = "ja_en_exp2"
+EXP_NAME = "ja_en_exp4"
 
-# exp1 -> baseline
+# base -> 1-1layers, 100n_units
+# exp1 -> 2-2layers
 # exp2 -> dropout(ratio=0.5)
 # exp3 -> dropout(ratio=0.2)
+# exp4 -> dropout(ratio=0.2), soft_attn
 
 # the maximum number of words to predict if EOS not predicted
 MAX_PREDICT_LEN = 20
@@ -104,7 +106,7 @@ num_layers_dec = 1
 hidden_units = 100
 # default model - no attention
 # when implementing attention use either - SOFT_ATTN or HARD_ATTN
-use_attn = NO_ATTN
+use_attn = SOFT_ATTN
 '''
 KEEP this flag true to avoid losing earlier trained models
 The code checks if a trained model file with the selected parameters
@@ -115,7 +117,7 @@ load_existing_model = True
 # Training Parameters
 #---------------------------------------------------------------------
 # Training EPOCHS
-NUM_EPOCHS = 5
+NUM_EPOCHS = 10
 # if >= 0, use GPU, if negative use CPU
 gpuid = -1
 #---------------------------------------------------------------------

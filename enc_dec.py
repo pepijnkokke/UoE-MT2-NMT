@@ -15,6 +15,7 @@ from chainer import cuda, Function, gradient_check, report, training, utils, Var
 from chainer import datasets, iterators, optimizers, serializers
 from chainer import Link, Chain, ChainList
 import chainer.functions as F
+import chainer.functions.array.concat as A
 import chainer.functions.noise.dropout as N
 import chainer.links as L
 from chainer.training import extensions
@@ -92,7 +93,7 @@ class EncoderDecoder(Chain):
 
         if attn > 0:
             # __QUESTION Add attention
-            pass
+            self.add_link("attn_out", L.Linear(4*n_units, 2*n_units))
 
         # Save the attention preference
         # __QUESTION you should use this flag to check if attention
@@ -205,12 +206,20 @@ class EncoderDecoder(Chain):
             indx = xp.argmax(prob.data[0])
             pred_word = Variable(xp.asarray([indx], dtype=np.int32), volatile=not train)
         else:
-            '''
-            ___QUESTION-2-SAMPLE
-            '''
+            ''' ___QUESTION-2-SAMPLE '''
             indx = xp.random.choice(a=len(prob.data[0]), p=prob.data[0])
             pred_word = Variable(xp.asarray([indx], dtype=np.int32), volatile=not train)
         return pred_word
+
+    def score(self, enc_state):
+        xp = cuda.cupy if self.gpuid >= 0 else np
+        return xp.dot(enc_state, xp.transpose(self[self.lstm_dec[-1]].h.data))
+
+    def align(self, enc_states):
+        xp = cuda.cupy if self.gpuid >= 0 else np
+        alpha = xp.array([xp.exp(self.score(enc_state)) for enc_state in enc_states], dtype=xp.float32)
+        alpha /= xp.sum(alpha)
+        return alpha
 
     def encode_decode_train(self, in_word_list, out_word_list, train=True, sample=False):
         xp = cuda.cupy if self.gpuid >= 0 else np
@@ -236,8 +245,10 @@ class EncoderDecoder(Chain):
             if self.attn == NO_ATTN:
                 predicted_out = self.out(self[self.lstm_dec[-1]].h)
             else:
-                # __QUESTION Add attention
-                pass
+                ''' __QUESTION Add attention '''
+                alpha = self.align(enc_states.data)
+                ctxt = xp.sum(alpha * enc_states.data, axis=0, keepdims=True)
+                predicted_out = self.out(self.attn_out(A.concat((ctxt, self[self.lstm_dec[-1]].h))))
 
             # compute loss
             prob = F.softmax(predicted_out)
@@ -277,17 +288,22 @@ class EncoderDecoder(Chain):
             self.decode(pred_word, train=False)
 
             if self.attn == NO_ATTN:
-                prob = F.softmax(self.out(self[self.lstm_dec[-1]].h))
+                predicted_out = self.out(self[self.lstm_dec[-1]].h)
             else:
-                # __QUESTION Add attention
-                pass
+                ''' __QUESTION Add attention '''
+                alpha = self.align(enc_states.data)
+                alpha_arr = xp.append(alpha_arr,alpha)
+                ctxt = xp.sum(alpha * enc_states.data, axis=0, keepdims=True)
+                predicted_out = self.out(self.attn_out(A.concat((ctxt, self[self.lstm_dec[-1]].h))))
+
+            prob = F.softmax(predicted_out)
 
             pred_word = self.select_word(prob, train=False, sample=sample)
             # add integer id of predicted word to output list
             predicted_sent.append(int(pred_word.data))
             pred_count += 1
         # __QUESTION Add attention
-        # When implementing attention, make sure to use alpha_array to store
+        # When implementing attention, make sure to use alpha_arr to store
         # your attention vectors.
         # The visualisation function in nmt_translate.py assumes such an array as input.
         return predicted_sent, alpha_arr
