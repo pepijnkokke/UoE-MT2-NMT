@@ -292,7 +292,7 @@ class EncoderDecoder(Chain):
             else:
                 ''' __QUESTION Add attention '''
                 alpha = self.align(enc_states.data)
-                alpha_arr = xp.append(alpha_arr,alpha)
+                alpha_arr = xp.concatenate((alpha_arr, xp.transpose(alpha)))
                 ctxt = xp.sum(alpha * enc_states.data, axis=0, keepdims=True)
                 predicted_out = self.out(self.attn_out(A.concat((ctxt, self[self.lstm_dec[-1]].h))))
 
