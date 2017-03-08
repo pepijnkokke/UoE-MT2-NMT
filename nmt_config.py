@@ -32,7 +32,7 @@ HARD_ATTN = 2
 attn_post = ["NO_ATTN", "SOFT_ATTN", "HARD_ATTN"]
 
 # Dropout ratio
-DROPOUT_RATIO = 0.2
+DROPOUT_RATIO = 0.5
 
 # maximum available sentences in dataset
 NUM_SENTENCES = 10500
@@ -70,7 +70,7 @@ print("Japanese English dataset configuration")
 
 # Set experiment name - can be used to save models with different
 # names
-EXP_NAME = "ja_en_exp3"
+EXP_NAME = "ja_en_exp2"
 
 # exp1 -> baseline
 # exp2 -> dropout(ratio=0.5)
