@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "Running mt experiment"
 source activate mtenv
-python nmt_translate.py
+python nmt_translate.py > current.scores
 echo "Finished training mt model"
 
