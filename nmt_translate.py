@@ -477,10 +477,8 @@ def test_lam_tran():
         line_fr = line_fr.encode()
         line_en = line_en.encode()
 
-        predict_sentence(line_fr=line_fr, line_en=line_en, sample=True)
+        predict_sentence(line_fr=line_fr, line_en=line_en, plot=True)
 
 if __name__ == "__main__":
     main()
-    compute_dev_pplx()
-    compute_dev_bleu()
-    predict(s=10000, num=100)
+    predict(s=10000, num=1, plot=True)

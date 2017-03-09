@@ -150,22 +150,38 @@
     Hyp & i gave him him for they died job \_EOS
   \end{tabular}
   \item
-    First, let's describe a naive version. During decoding I have list of all
-    possible next words (i.e.\ the vocabulary) and a score for each next word
-    (i.e.\ the log of that word's probability in the network's output
-    distribution).
-    The naive implementation would simply try each possible word as a next word,
-    and recurse, scoring the generated sentences using the sum of the
-    log-probabilities. 
+    How did we implement beam search for the phrase-based model? The idea was
+    that each phrase in the output would correspond to a phrase on the input,
+    and that these may be permuted in some way.
+    However, our NMT model no longer \emph{really} has this property. It simply
+    consumes a bunch of words, and then produces out a bunch of words, with no
+    obvious relation between an output phrase and an input phrase.
+
+    So, what can we do? We could use beam search to search all possible
+    output phrases. When decoding, I have access to a list of all possible next
+    words (namely, the vocabulary) and a score for each possible next word
+    (namely, the log of that word's probability according to the network's
+    output distribution). A naive implementation could simply branch, trying
+    each possible word as the next word, and scoring the generated sentences
+    using the sum of the log-probabilities.
     From here, we can add the beam search heuristic, e.g.\ at each step, we only
-    keep the $k$ most promising sentences.
+    keep the $k$ most promising sentences. We simply keep expanding the $k$ best
+    sentences until they produce an \texttt{\_EOS} token (or run into the
+    \texttt{MAX\_PREDICT\_LEN} setting).
   \item
-    We cannot implement dynamic programming for this model without changing some
-    fundamental parts of the model. The reason for this is that there is no way
-    to know when translations are done, or how long the translations will be,
-    because we are basically waiting for the \texttt{\_EOS} token to become
-    probable (according to the network), and there is no knowing when that will
-    happen. 
+    We cannot implement dynamic programming for the above model, because we have
+    no notion of when translations are sharing work. This was also discussed
+    above: we don't know what phrases in the source language correspond to which
+    phrases in the target language. We only know that the NMT model has chosen
+    to generate some phrase. Therefore we cannot say that some partial
+    translation is better than another partial translation which translates the
+    same source words, because we don't know which source words a partial
+    translation translates. 
+    
+    Furthermore, discounting the \texttt{MAX\_PREDICT\_LEN} setting, there is no
+    way to know when translations are done, or how long the translations will
+    be, because we are basically waiting for the \texttt{\_EOS} token to be
+    predicted, and there is no knowing when that will happen. 
 \end{compactenum}
 \end{framed}
 
