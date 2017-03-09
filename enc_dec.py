@@ -196,6 +196,8 @@ class EncoderDecoder(Chain):
                 backward_states = self[self.lstm_rev_enc[-1]].h
                 first_entry = False
 
+        enc_states = F.concat((forward_states, backward_states), axis=1)
+
         return enc_states
 
 
