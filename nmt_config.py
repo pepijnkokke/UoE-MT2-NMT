@@ -70,7 +70,7 @@ print("Japanese English dataset configuration")
 
 # Set experiment name - can be used to save models with different
 # names
-EXP_NAME = "ja_en_exp4"
+EXP_NAME = "ja_en_exp4_mini"
 
 # base -> 1-1layers, 100n_units
 # exp1 -> 2-2layers
@@ -82,7 +82,7 @@ EXP_NAME = "ja_en_exp4"
 MAX_PREDICT_LEN = 20
 
 # change flag to use reduced dataset, 1000 datasets
-USE_ALL_DATA = True
+USE_ALL_DATA = False
 
 if USE_ALL_DATA:
   # number of training examples to use
@@ -117,7 +117,7 @@ load_existing_model = True
 # Training Parameters
 #---------------------------------------------------------------------
 # Training EPOCHS
-NUM_EPOCHS = 10
+NUM_EPOCHS = 0
 # if >= 0, use GPU, if negative use CPU
 gpuid = -1
 #---------------------------------------------------------------------

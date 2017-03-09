@@ -189,11 +189,14 @@ class EncoderDecoder(Chain):
             # enc_states stores the hidden state vectors of the encoder
             # this can be used for implementing attention
             if first_entry == False:
-                h_state = F.concat((self[self.lstm_enc[-1]].h, self[self.lstm_rev_enc[-1]].h), axis=1)
-                enc_states = F.concat((enc_states, h_state), axis=0)
+                forward_states = F.concat((forward_states, self[self.lstm_enc[-1]].h), axis=0)
+                backward_states = F.concat((self[self.lstm_rev_enc[-1]].h, backward_states), axis=0)
             else:
-                enc_states = F.concat((self[self.lstm_enc[-1]].h, self[self.lstm_rev_enc[-1]].h), axis=1)
+                forward_states = self[self.lstm_enc[-1]].h
+                backward_states = self[self.lstm_rev_enc[-1]].h
                 first_entry = False
+
+        enc_states = F.concat((forward_states, backward_states), axis=1)
 
         return enc_states
 
@@ -292,7 +295,7 @@ class EncoderDecoder(Chain):
             else:
                 ''' __QUESTION Add attention '''
                 alpha = self.align(enc_states.data)
-                alpha_arr = xp.append(alpha_arr,alpha)
+                alpha_arr = xp.concatenate((alpha_arr, xp.transpose(alpha)))
                 ctxt = xp.sum(alpha * enc_states.data, axis=0, keepdims=True)
                 predicted_out = self.out(self.attn_out(A.concat((ctxt, self[self.lstm_dec[-1]].h))))
 
