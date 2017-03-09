@@ -92,3 +92,4 @@ ENV/
 *.blg
 *.pdf
 *.synctex.gz
+auto/
