@@ -19,7 +19,7 @@ import chainer.functions.noise.dropout as N
 import chainer.links as L
 from chainer.training import extensions
 from chainer.functions.math.matmul import matmul
-from chainer.functions.math.sum import sum
+import chainer.functions.math.sum as M
 
 
 # In[]:
@@ -241,7 +241,7 @@ class EncoderDecoder(Chain):
                 ''' __QUESTION Add attention '''
                 prevh = self[self.lstm_dec[-1]].h
                 alpha = F.softmax(matmul(prevh, enc_states, transb=True))
-                ctxt = F.reshape(sum(F.scale(enc_states, F.transpose(alpha), axis=0), axis=0), (1, 200))
+                ctxt = F.reshape(M.sum(F.scale(enc_states, F.transpose(alpha), axis=0), axis=0), (1, 200))
                 predicted_out = self.out(self.attn_out(F.concat((ctxt, prevh))))
 
             # compute loss
@@ -287,7 +287,7 @@ class EncoderDecoder(Chain):
                 ''' __QUESTION Add attention '''
                 prevh = self[self.lstm_dec[-1]].h
                 alpha = F.softmax(matmul(prevh, enc_states, transb=True))
-                ctxt = F.reshape(sum(F.scale(enc_states, F.transpose(alpha), axis=0), axis=0), (1, 200))
+                ctxt = F.reshape(M.sum(F.scale(enc_states, F.transpose(alpha), axis=0), axis=0), (1, 200))
                 alpha_arr = xp.concatenate((alpha_arr, alpha.data))
                 predicted_out = self.out(self.attn_out(F.concat((ctxt, prevh))))
 
