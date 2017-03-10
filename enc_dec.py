@@ -15,11 +15,11 @@ from chainer import cuda, Function, gradient_check, report, training, utils, Var
 from chainer import datasets, iterators, optimizers, serializers
 from chainer import Link, Chain, ChainList
 import chainer.functions as F
-import chainer.functions.array.concat as A
 import chainer.functions.noise.dropout as N
 import chainer.links as L
 from chainer.training import extensions
-from chainer.functions.array import concat
+from chainer.functions.math.matmul import matmul
+from chainer.functions.math.sum import sum
 
 
 # In[]:
@@ -134,7 +134,7 @@ class EncoderDecoder(Chain):
 
     '''
     Function to feed an input word through the embedding and lstm layers
-        args:
+    args:
         embed_layer: embeddings layer to use
         lstm_layer:  list of names of lstm layers to use
     '''
@@ -214,16 +214,6 @@ class EncoderDecoder(Chain):
             pred_word = Variable(xp.asarray([indx], dtype=np.int32), volatile=not train)
         return pred_word
 
-    def score(self, enc_state):
-        xp = cuda.cupy if self.gpuid >= 0 else np
-        return xp.dot(enc_state, xp.transpose(self[self.lstm_dec[-1]].h.data))
-
-    def align(self, enc_states):
-        xp = cuda.cupy if self.gpuid >= 0 else np
-        alpha = xp.array([xp.exp(self.score(enc_state)) for enc_state in enc_states], dtype=xp.float32)
-        alpha /= xp.sum(alpha)
-        return alpha
-
     def encode_decode_train(self, in_word_list, out_word_list, train=True, sample=False):
         xp = cuda.cupy if self.gpuid >= 0 else np
         self.reset_state()
@@ -249,9 +239,10 @@ class EncoderDecoder(Chain):
                 predicted_out = self.out(self[self.lstm_dec[-1]].h)
             else:
                 ''' __QUESTION Add attention '''
-                alpha = self.align(enc_states.data)
-                ctxt = xp.sum(alpha * enc_states.data, axis=0, keepdims=True)
-                predicted_out = self.out(self.attn_out(A.concat((ctxt, self[self.lstm_dec[-1]].h))))
+                prevh = self[self.lstm_dec[-1]].h
+                alpha = F.softmax(matmul(prevh, enc_states, transb=True))
+                ctxt = F.reshape(sum(F.scale(enc_states, F.transpose(alpha), axis=0), axis=0), (1, 200))
+                predicted_out = self.out(self.attn_out(F.concat((ctxt, prevh))))
 
             # compute loss
             prob = F.softmax(predicted_out)
@@ -294,10 +285,11 @@ class EncoderDecoder(Chain):
                 predicted_out = self.out(self[self.lstm_dec[-1]].h)
             else:
                 ''' __QUESTION Add attention '''
-                alpha = self.align(enc_states.data)
-                alpha_arr = xp.concatenate((alpha_arr, xp.transpose(alpha)))
-                ctxt = xp.sum(alpha * enc_states.data, axis=0, keepdims=True)
-                predicted_out = self.out(self.attn_out(A.concat((ctxt, self[self.lstm_dec[-1]].h))))
+                prevh = self[self.lstm_dec[-1]].h
+                alpha = F.softmax(matmul(prevh, enc_states, transb=True))
+                ctxt = F.reshape(sum(F.scale(enc_states, F.transpose(alpha), axis=0), axis=0), (1, 200))
+                alpha_arr = xp.concatenate((alpha_arr, alpha.data))
+                predicted_out = self.out(self.attn_out(F.concat((ctxt, prevh))))
 
             prob = F.softmax(predicted_out)
 

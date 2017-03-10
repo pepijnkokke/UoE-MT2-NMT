@@ -70,19 +70,13 @@ print("Japanese English dataset configuration")
 
 # Set experiment name - can be used to save models with different
 # names
-EXP_NAME = "ja_en_exp4_mini"
-
-# base -> 1-1layers, 100n_units
-# exp1 -> 2-2layers
-# exp2 -> dropout(ratio=0.5)
-# exp3 -> dropout(ratio=0.2)
-# exp4 -> dropout(ratio=0.2), soft_attn
+EXP_NAME = "ja_en_exp1"
 
 # the maximum number of words to predict if EOS not predicted
 MAX_PREDICT_LEN = 20
 
 # change flag to use reduced dataset, 1000 datasets
-USE_ALL_DATA = False
+USE_ALL_DATA = True
 
 if USE_ALL_DATA:
   # number of training examples to use
@@ -117,7 +111,7 @@ load_existing_model = True
 # Training Parameters
 #---------------------------------------------------------------------
 # Training EPOCHS
-NUM_EPOCHS = 0
+NUM_EPOCHS = 1
 # if >= 0, use GPU, if negative use CPU
 gpuid = -1
 #---------------------------------------------------------------------
