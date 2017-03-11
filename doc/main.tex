@@ -326,9 +326,21 @@
   Furthermore, a lot of the time, the attention is more-or-less uniform. This
   can be seen best in figure~\ref{fig:plot-2}.
 \end{framed}
-\end{questions}
 
 \clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%% 
+\question{Extension}
+\begin{framed}
+  As you may have noticed, I've been griping about the quality of the Japanese
+  tokeniser used in tokenising the corpus for this assignment.
+  In order to test whether this actually had an effect on the quality of the
+  learned translation model, I re-tokenised the Japanese corpus using
+  MeCab~\citep{Kudo-2005}, and trained an attentional model on the result. See
+  figure~\ref{fig:bleu-pplx}.
+\end{framed}
+
+\end{questions}
 
 \bibliography{main}
 \bibliographystyle{apalike}
