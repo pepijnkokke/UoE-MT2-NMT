@@ -76,7 +76,7 @@ EXP_NAME = "ja_en_exp6"
 MAX_PREDICT_LEN = 20
 
 # change flag to use reduced dataset, 1000 datasets
-USE_ALL_DATA = True
+USE_ALL_DATA = False
 
 if USE_ALL_DATA:
   # number of training examples to use
@@ -111,7 +111,7 @@ load_existing_model = True
 # Training Parameters
 #---------------------------------------------------------------------
 # Training EPOCHS
-NUM_EPOCHS = 10
+NUM_EPOCHS = 1
 # if >= 0, use GPU, if negative use CPU
 gpuid = -1
 #---------------------------------------------------------------------
