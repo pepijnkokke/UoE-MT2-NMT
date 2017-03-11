@@ -222,7 +222,7 @@ def train_loop(text_fname, num_training, num_epochs, log_mode="a"):
                         break
 
                     # compute loss
-                    loss = model.encode_decode_train(fr_ids, en_ids)
+                    loss = model.encode_decode_train(fr_ids, en_ids, sample=use_sample)
 
                     # clear gradient
                     model.cleargrads()
