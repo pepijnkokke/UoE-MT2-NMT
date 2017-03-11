@@ -75,7 +75,6 @@
     symbols) when we measure sentence length in tokens, and Japanese is more
     productive when we measure it in characters. There explanations for both
     these observations, which I'll go into in Q3.
-
     What our graphs do make clear, however, is that there is a linear
     correlation between sentence lengths in English and Japanese. This means
     that we can expect sentence length to change linearly when we translate,
@@ -258,7 +257,7 @@
 
   (While it is irrelevant, it is interesting to note that both the 2-layer model
   and the dropout model choose to translate the source using the phrase ``where
-  did you''.) 
+  did you''.)
 \end{framed}
 
 
@@ -271,7 +270,7 @@
   after~\citet{Luong-2015}. One with, and one without dropout. Trusting BLEU
   and~\citet{Zaremba-2014}, I chose to use a ratio of $0.2$. Once again, I will
   compare these models to the original baseline and the two which I trained
-  myself. See figure~\ref{fig:bleu-pplx}. 
+  myself. See figure~\ref{fig:bleu-pplx}.
 
   The attentional models are the first to best the baseline where BLEU is
   concerned, scoring $24.243$ and $25.089$ at their peaks, a good $4$ points
@@ -309,7 +308,23 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%
 \question[10]{Explain what you observe with attention. (Figures may appear in an appendix.)}
 \begin{framed}
-\emph{Your answer here}
+  There is a lot of variation.
+  For instance, in figure~\ref{fig:plot-1} we see that the NN had a very strong
+  attentional link between ``hotel'' and ホテル (correct) and a swath of attention
+  for 山 while generating ``mountain mountain . \_EOS'' (sort of correct).
+  To a lesser extend, in figures~\ref{fig:plot-2} and~\ref{fig:plot-3}, we see
+  that it got the links between 何 and ``what'', and 時 and ``time'' right.
+  This is good to see.
+
+  Even smaller victories are the swaths of attention associating the question
+  particle か with ``?''---yet, here we also see an association with 今日, the
+  word for today. 
+  And this is only the beginning. In figure~\ref{fig:plot-2}, we see a relatively
+  strong link between し and ``you''. However, し is part of the \emph{verb}.
+  Here we may once again blame the tokeniser.
+
+  Furthermore, a lot of the time, the attention is more-or-less uniform. This
+  can be seen best in figure~\ref{fig:plot-2}.
 \end{framed}
 \end{questions}
 
@@ -354,6 +369,31 @@
   \caption{BLEU and perplexity scores per epoch.}
   \label{fig:bleu-pplx}
 \end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{fig-plot-1}
+  Reference: ``The hotel is at the foot of a mountain.''
+  \caption{Attention plot (1)}
+  \label{fig:plot-1}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{fig-plot-2}
+  Reference: ``Have you read today's paper?''
+  \caption{Attention plot (2)}
+  \label{fig:plot-2}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{fig-plot-3}
+  Reference: ``What time do you get up every morning?''
+  \caption{Attention plot (3)}
+  \label{fig:plot-3}
+\end{figure}
+
 
 \end{CJK}
 \end{document}
