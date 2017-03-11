@@ -481,6 +481,4 @@ def test_lam_tran():
 
 if __name__ == "__main__":
     main()
-    #compute_dev_bleu()
-    #compute_dev_pplx()
-    predict(s=1000, num=1)
+    predict(s=10000, num=1000)
