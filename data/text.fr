@@ -1,1 +1,1 @@
-text.mecab.fr
+text.base.fr

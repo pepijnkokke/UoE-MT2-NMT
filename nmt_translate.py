@@ -481,3 +481,4 @@ def test_lam_tran():
 
 if __name__ == "__main__":
     main()
+    predict(s=10000, num=10000)

@@ -338,6 +338,19 @@
   learned translation model, I re-tokenised the Japanese corpus using
   MeCab~\citep{Kudo-2005}, and trained an attentional model on the result. See
   figure~\ref{fig:bleu-pplx}.
+
+  The plot for this experiment is labeled `MeCab', and has been trained with
+  attention and dropout (with a ratio of 0.2) on the re-tokenised corpus.
+  I only ran the regular and MeCab attentional experiments once, and therefore I
+  cannot \emph{really} draw any conclusions on the basis of these numbers.
+  However, it does not seem like the tokeniser was as big of a factor as I
+  thought. The highest BLEU value for the MeCab experiment is almost identical
+  to the highest of the regular attentional experiment, and their perplexity are
+  comparable as well.
+
+  I will have to be content in the knowledge that this tokeniser leaves
+  adjective like 忙しい intact, and splits verbs like 行きます more sensibly,
+  even if that doesn't seem to be helpful.
 \end{framed}
 
 \end{questions}
